@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios</title>
+    <style>
+        /* Centralizar a tabela */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Ocupa a altura total da janela */
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Estilizar a tabela */
+        table {
+            border-collapse: collapse; /* Remove espaços entre bordas */
+            margin: auto; /* Centraliza adicionalmente */
+            width: 80%; /* Define a largura da tabela */
+            text-align: left;
+        }
+
+        /* Espaçamento e bordas */
+        th, td {
+            padding: 12px; /* Espaçamento interno das células */
+            border: 1px solid #ddd; /* Borda fina */
+        }
+
+        /* Cabeçalho estilizado */
+        th {
+            background-color: #f4f4f4; /* Fundo claro no cabeçalho */
+            font-weight: bold;
+        }
+
+        /* Cor de fundo alternada nas linhas */
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Cor de fundo ao passar o mouse */
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Usuarios</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Login</th>
+                <th>Senha</th>
+            </tr>
+        </thead>
+        <tbody>
+           
+            <!-- Itera sobre a lista de usuários -->
+            <tr th:each="usuario : ${usuarios}">
+                <td th:text="${usuario.id}"></td>
+                <td th:text="${usuario.login}"></td>
+                <td th:text="${usuario.senha}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

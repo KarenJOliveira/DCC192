@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
@@ -92,10 +93,11 @@ public class HomeController {
         return mv;
     }
 
+
     @Autowired
     UsuarioRepository ur;
 
-    @RequestMapping({"/users"})
+    @GetMapping({"/users"})
     public ModelAndView requestMethodName() {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("usuarios");
@@ -103,5 +105,23 @@ public class HomeController {
         mv.addObject("usuarios",lu);
         return mv;
     }
+
+    @GetMapping("/addUser")
+    public ModelAndView getAddUser() {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("adicionaUsuario");
+        
+        return mv;
+    }
     
+    @PostMapping("/saveUser")
+    public ModelAndView saveUser(String login, String senha) {
+        ur.save(new Usuario(login,senha));
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("usuarios");
+        List<Usuario> lu = ur.findAll();
+        mv.addObject("usuarios",lu);
+        return mv;
+    }
+
 }

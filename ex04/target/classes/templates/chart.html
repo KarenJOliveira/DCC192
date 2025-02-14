@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <div id="chart_div"></div>
+
+    <script>
+        google.charts.load('current', {packages: ['corechart', 'bar']});
+        google.charts.setOnLoadCallback(drawBarColors);
+
+        function drawBarColors() {
+            var jsonDataString = /*[[${jsonData}]]*/ '[[${jsonData}]]'.replace(/&quot;/g, '"');
+            var jsonData = JSON.parse(jsonDataString);
+            console.log(jsonDataString);
+
+            var data = google.visualization.arrayToDataTable(jsonData);
+
+            var options = {
+              title: 'Total de acessos por usuário',
+              chartArea: {width: '50%'},
+              colors: ['#b0120a'],
+              hAxis: {
+                title: 'Total de Acessos',
+                minValue: 0
+              },
+              vAxis: {
+                title: 'Usuário'
+              }
+            };
+
+            var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+
+<body>
+    <center>
+        <p th:text="'Hoje é ' +${diaMes}"></p>
+        <div id="curve_chart" style="width: 900px; height: 500px"></div>
+    </center>
+</body>
+</html>

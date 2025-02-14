@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>Adicionar usuário</p>
+    <form th:action="@{/saveUser}" method="post">
+        <input type="text" id="login" name="login" placeholder="Digite o login">
+        <input type="text" id="senha" name="senha" placeholder="Digite a senha">
+        <button type="submit">Enviar</button>   
+    </form>
+    <!-- <form th:action="@{/users}" method="get">
+        <button type="submit">Retornar à Lista de Usuários</button>
+    </form> -->
+</body>
+</html>

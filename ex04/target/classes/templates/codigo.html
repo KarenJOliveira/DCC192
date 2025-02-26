@@ -16,7 +16,7 @@
             <p th:text="'Digite o codigo: '+${senha}"></p>
         </div>
         <div class="p-3">   
-            <form th:action="@{/login}" method="get">
+            <form th:action="@{/index}" method="get">
                 <input type="text" id="codigo" name="codigo" placeholder="seu codigo"/><br/>
                 <input type="hidden" id="captcha" name="captcha" th:value="${senha}"/><br/>
                 <button type="submit">Enviar</button>

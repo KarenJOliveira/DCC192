@@ -5,12 +5,21 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 @Entity
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @NotBlank(message = "Login é obrigatório")
+    @Size(min = 3, max = 50, message = "O usuário deve ter entre 3 e 50 caracteres")
     private String login;
+
+    @NotBlank(message = "Senha é obrigatória")
+    @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
     private String senha;
 
 

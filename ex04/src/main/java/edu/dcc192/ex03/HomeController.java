@@ -23,6 +23,9 @@ import java.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.springframework.ui.Model;
 
+import org.springframework.validation.BindingResult;
+import jakarta.validation.Valid;
+
 
 //import ch.qos.logback.core.model.Model;
 
@@ -40,54 +43,47 @@ public class HomeController {
     }
 
     @Autowired
-    private GeradorSenha senha;
+    private GeradorSenha capt;
 
-    @GetMapping("/")
-    public ModelAndView home1(){ 
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("codigo");
-        mv.addObject("senha", senha.GerarSenha());
-
-        return mv;
-    }
+    
 
     // @RequestMapping("/login")
     // public String home(){
     //     return "login.html";
     // }
 
-    @GetMapping("/login")
-    public ModelAndView home2(@RequestParam String codigo, String captcha){
-        ModelAndView mv = new ModelAndView();
-        if(codigo.equals(captcha)){
-            mv.setViewName("login");
-        }else{
-            mv.setViewName("codigo");
-            mv.addObject("senha", senha.GerarSenha());
-            mv.addObject("error", true);
-        }
-        return mv;
-    }   
+    // @GetMapping("/login")
+    // public ModelAndView home2(@RequestParam String codigo, String captcha){
+    //     ModelAndView mv = new ModelAndView();
+    //     if(codigo.equals(captcha)){
+    //         mv.setViewName("login");
+    //     }else{
+    //         mv.setViewName("codigo");
+    //         mv.addObject("senha", senha.GerarSenha());
+    //         mv.addObject("error", true);
+    //     }
+    //     return mv;
+    // }   
 
     
     @Autowired
     private Dados dados;
     
     @GetMapping("/index")
-    public ModelAndView getMethodName(@ModelAttribute("usuario") Usuario usuario, String login) {
+    public ModelAndView getIndex(@ModelAttribute("usuario") Usuario usuario) {
         ModelAndView mv = new ModelAndView();
-        usuario.setLogin(login);
+        //usuario.setLogin(login);
         boolean encontrou = false;
         for(int i=0;i<records.length();i++){
             String nome = records.getJSONArray(i).getString(0).toString();
-            if(nome.equals(login)){
+            if(nome.equals(usuario.getLogin())){
                 int incr = records.getJSONArray(i).getInt(1) + 1;
                 records.getJSONArray(i).put(1, incr);
                 encontrou = true;
             }
         }
         if(!encontrou){
-            records.put(new JSONArray().put(login).put(1));
+            records.put(new JSONArray().put(usuario.getLogin()).put(1));
         }
         
         mv.setViewName("index");
@@ -109,7 +105,7 @@ public class HomeController {
     }
 
     @GetMapping("/return")
-    public ModelAndView getMethodName(@ModelAttribute("usuario") Usuario usuario) {
+    public ModelAndView getReturn(@ModelAttribute("usuario") Usuario usuario) {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("index");
         mv.addObject("usuario", usuario); // Passa o nome como parâmetro para a página
@@ -120,7 +116,7 @@ public class HomeController {
     @GetMapping("logout")
     public ModelAndView getLogout() {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("login");
+        mv.setViewName("loginInicial");
         mv.addObject("logout", true);
         return mv;
     }
@@ -128,6 +124,76 @@ public class HomeController {
 
     @Autowired
     UsuarioRepository ur;
+
+    public boolean testa(Usuario u){
+        List<Usuario> lu = ur.findAll();
+        boolean achou = false;
+        for(Usuario i: lu){
+            if(i.getLogin().equals(u.getLogin()) && i.getSenha().equals(u.getSenha())){
+                achou=true;
+                break;
+            }
+        }
+        return achou;
+    }
+    public boolean existe(String login){
+        List<Usuario> lu = ur.findAll();
+        boolean achou = false;
+        for(Usuario i: lu){
+            if(i.getLogin().equals(login)){
+                achou=true;
+                break;
+            }
+        }
+        return achou;
+    }
+
+    @GetMapping("/")
+    public ModelAndView getLogin() {
+
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("loginInicial");
+
+        return mv;
+    }
+
+    
+
+    @PostMapping("/validaLogin")
+    public ModelAndView validaLogin(@ModelAttribute("usuario") Usuario usuario, @RequestParam String login, String senha, BindingResult bindingResult) {
+        ModelAndView mv = new ModelAndView();
+
+        if (bindingResult.hasErrors()) {
+            ModelAndView modelAndView = new ModelAndView("loginInicial"); // Retorna para a tela de login
+            modelAndView.addObject("org.springframework.validation.BindingResult.usuario", bindingResult); // <- Isso é essencial!
+            
+            return modelAndView;
+        }
+
+        if(existe(login)){
+            usuario = new Usuario(login,senha);
+            if (testa(usuario)) {
+                mv.setViewName("codigo");
+                mv.addObject("senha", capt.GerarSenha());
+            }else{
+                mv.setViewName("loginInicial");
+                mv.addObject("erro", true);
+            }
+        }else{
+            mv.setViewName("adicionaUsuario");
+        }
+        
+        return mv;
+    }
+
+    @GetMapping("/captcha")
+    public ModelAndView home1(){ 
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("codigo");
+        mv.addObject("senha", capt.GerarSenha());
+
+        return mv;
+    }
 
     @GetMapping({"/users"})
     public ModelAndView requestMethodName() {
@@ -150,9 +216,10 @@ public class HomeController {
     public ModelAndView saveUser(String login, String senha) {
         ur.save(new Usuario(login,senha));
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("usuarios");
-        List<Usuario> lu = ur.findAll();
-        mv.addObject("usuarios",lu);
+        // mv.setViewName("usuarios");
+        // List<Usuario> lu = ur.findAll();
+        // mv.addObject("usuarios",lu);
+        mv.setViewName("loginInicial");
         return mv;
     }
 
